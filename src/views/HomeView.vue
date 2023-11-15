@@ -2,11 +2,18 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { twMerge } from 'tailwind-merge'
+import axios from 'axios';
+import type { User } from '@/models/user'; 
 
 const router = useRouter()
 
+const users = ref<User[]>([]);
+
 onMounted(async () => {
   // fetch users
+  console.log(axios.get('http://localhost:5000/users/online'));
+  const apiUsers = await axios.get('http://localhost:5000/users/online')
+  users.value = apiUsers.data;
 
   // fetch conversations
 })
@@ -52,7 +59,7 @@ const createConversation = async () => {
           <div class="flex flew-row flex-wrap gap-2">
             <!-- liste des utilisateurs -->
             <template
-              v-for="user in []"
+              v-for="user in users"
             >
               Un utilisateur {{ user }}
             </template>
