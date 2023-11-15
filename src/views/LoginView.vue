@@ -25,10 +25,14 @@
             required
           />
         </div>
+        <p v-if="!disableButton" style="color: red; font-weight: bold;">
+            Login ou Mot de passe incorrect
+        </p>
         <div class="text-center">
           <button
             type="submit"
             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:bg-blue-300 disabled:cursor-not-allowed"
+            :disabled="!disableButton"
           >
             Login
           </button>
@@ -45,8 +49,14 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const username = ref('')
-const password = ref<string>()
+const password = ref<string>("")
+
+const disableButton = computed(() => {
+  return password.value.length >= 5 && password.value.length <=15 && username.value.length > 0;
+})
 
 const submitForm = async () => {
 }
 </script>
+
+
