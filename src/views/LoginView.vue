@@ -26,7 +26,10 @@
           />
         </div>
         <p v-if="!disableButton" style="color: red; font-weight: bold;">
-            Login ou Mot de passe incorrect
+            Login ou Mot de passe invalide
+        </p>
+        <p v-if="incorrectPassword" style="color: red; font-weight: bold;">
+            Mot de passe incorrect
         </p>
         <div class="text-center">
           <button
@@ -45,8 +48,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from "axios"
+import useSocketStore from '@/store/socketStore';
 
 const router = useRouter()
+const incorrectPassword = ref(false)
 
 const username = ref('')
 const password = ref<string>("")
@@ -56,6 +62,21 @@ const disableButton = computed(() => {
 })
 
 const submitForm = async () => {
+  const socketStore = useSocketStore();
+ 
+  axios.post("http://localhost:5000/users/login", {
+    "username": username.value,
+    "password": password.value
+  } ).then(function (response) {
+    console.log(response.data.user);
+    socketStore.login(response.data.user);
+    router.push("/");
+  })
+  .catch(function (error) {
+    console.log(error);
+    incorrectPassword.value = true;
+  });
+
 }
 </script>
 
