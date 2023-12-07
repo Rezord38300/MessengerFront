@@ -31,10 +31,9 @@ const createConversation = async () => {
 }
 
 function isUserOnline(user: User) {
-      // Utilisez includes pour vérifier si l'utilisateur est en ligne
-      // console.log(usersOnline.value.some(onlineUser => onlineUser._id === user._id));
       return usersOnline.value.some(onlineUser => onlineUser._id === user._id)
 }
+
 </script>
 
 <template>
