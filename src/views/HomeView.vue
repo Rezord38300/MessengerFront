@@ -6,24 +6,34 @@ import axios from 'axios';
 import type { User } from '@/models/user'; 
 import { useUserStore }  from '@/store/userStore';
 import { storeToRefs } from 'pinia';
+import UserCard from '@/components/UserCard.vue';
 
 const router = useRouter()
 const userStore = useUserStore();
 const { currentUser }   = storeToRefs(userStore);
 
 const users = ref<User[]>([]);
+const usersOnline = ref<User[]>([]);
 
 onMounted(async () => {
   // fetch users
-  console.log(axios.get('http://localhost:5000/users/all'));
+  console.log(await axios.get('http://localhost:5000/users/all'));
   const apiUsers = await axios.get('http://localhost:5000/users/all')
-  users.value = apiUsers.data;
+  users.value = apiUsers.data.users;
+  const apiUsersOnline = await axios.get('http://localhost:5000/users/online')
+  usersOnline.value = apiUsersOnline.data.users;
   // fetch conversations
 })
 
 const selectedUsersIds = ref<Array<string>>([])
 
 const createConversation = async () => {
+}
+
+function isUserOnline(user: User) {
+      // Utilisez includes pour vérifier si l'utilisateur est en ligne
+      // console.log(usersOnline.value.some(onlineUser => onlineUser._id === user._id));
+      return usersOnline.value.some(onlineUser => onlineUser._id === user._id)
 }
 </script>
 
@@ -64,7 +74,7 @@ const createConversation = async () => {
             <template
               v-for="user in users"
             >
-              Un utilisateur {{ user }}
+              <UserCard :user="user" :selected="false" :online="isUserOnline(user)"/>
             </template>
           </div>
         </template>
