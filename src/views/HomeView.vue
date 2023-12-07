@@ -6,6 +6,7 @@ import axios from 'axios';
 import type { User } from '@/models/user'; 
 import { useUserStore }  from '@/store/userStore';
 import { storeToRefs } from 'pinia';
+import UserCard from '@/components/UserCard.vue';
 
 const router = useRouter()
 const userStore = useUserStore();
@@ -17,7 +18,7 @@ onMounted(async () => {
   // fetch users
   console.log(axios.get('http://localhost:5000/users/all'));
   const apiUsers = await axios.get('http://localhost:5000/users/all')
-  users.value = apiUsers.data;
+  users.value = apiUsers.data.users;
   // fetch conversations
 })
 
@@ -64,7 +65,7 @@ const createConversation = async () => {
             <template
               v-for="user in users"
             >
-              Un utilisateur {{ user }}
+              <UserCard :user="user" :selected="false" :online="true" />
             </template>
           </div>
         </template>
