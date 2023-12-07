@@ -7,6 +7,7 @@ import type { User } from '@/models/user';
 import { useUserStore }  from '@/store/userStore';
 import { storeToRefs } from 'pinia';
 import UserCard from '@/components/UserCard.vue';
+import UserCard from '@/components/UserCard.vue';
 
 const router = useRouter()
 const userStore = useUserStore();
