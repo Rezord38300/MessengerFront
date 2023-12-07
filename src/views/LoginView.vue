@@ -50,6 +50,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from "axios"
 import useSocketStore from '@/store/socketStore';
+import { useUserStore } from '@/store/userStore';
 
 const router = useRouter()
 const incorrectPassword = ref(false)
@@ -63,13 +64,16 @@ const disableButton = computed(() => {
 
 const submitForm = async () => {
   const socketStore = useSocketStore();
+  const userStore = useUserStore();
  
   axios.post("http://localhost:5000/users/login", {
     "username": username.value,
     "password": password.value
   } ).then(function (response) {
-    console.log(response.data.user);
+    console.log(response.data);
+    userStore.setCurrentUser(response.data.user); 
     socketStore.login(response.data.user);
+    sessionStorage.setItem("jwt", response.data.token)
     router.push("/");
   })
   .catch(function (error) {

@@ -4,17 +4,20 @@ import { useRouter } from 'vue-router'
 import { twMerge } from 'tailwind-merge'
 import axios from 'axios';
 import type { User } from '@/models/user'; 
+import { useUserStore }  from '@/store/userStore';
+import { storeToRefs } from 'pinia';
 
 const router = useRouter()
+const userStore = useUserStore();
+const { currentUser }   = storeToRefs(userStore);
 
 const users = ref<User[]>([]);
 
 onMounted(async () => {
   // fetch users
-  console.log(axios.get('http://localhost:5000/users/online'));
-  const apiUsers = await axios.get('http://localhost:5000/users/online')
+  console.log(axios.get('http://localhost:5000/users/all'));
+  const apiUsers = await axios.get('http://localhost:5000/users/all')
   users.value = apiUsers.data;
-
   // fetch conversations
 })
 
@@ -31,12 +34,12 @@ const createConversation = async () => {
         <div class="bg-white p-4 shadow-md rounded-lg h-[100px]">
           <div class="flex items-center">
             <img
-              :src="`https://source.unsplash.com/userid/100x100`"
+              :src="`https://source.unsplash.com/` + currentUser?.profilePicId + `/100x100`"
               alt="User Image"
               class="w-12 h-12 rounded-full mr-4"
             />
             <div>
-              <h2 class="text-2xl font-bold">Nom de l'utilisateur connecté</h2>
+              <h2 class="text-2xl font-bold">{{currentUser?.username}}</h2>
               <span class="text-green-500">Online</span>
             </div>
           </div>
