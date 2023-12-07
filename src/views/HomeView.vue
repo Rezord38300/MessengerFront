@@ -30,6 +30,21 @@ const selectedUsersIds = ref<Array<string>>([])
 const createConversation = async () => {
 }
 
+const toggleUserSelection = (userId: string) => {
+  const index = selectedUsersIds.value.indexOf(userId);
+  if (index !== -1) {
+    // L'utilisateur est déjà sélectionné, donc le retirer de la sélection
+    selectedUsersIds.value.splice(index, 1);
+  } else {
+    // L'utilisateur n'est pas sélectionné, donc l'ajouter à la sélection
+    selectedUsersIds.value.push(userId);
+  }
+}
+
+const isUserSelected = (userId: string) => {
+  return selectedUsersIds.value.includes(userId);
+}
+
 function isUserOnline(user: User) {
       return usersOnline.value.some(onlineUser => onlineUser._id === user._id)
 }
@@ -73,7 +88,7 @@ function isUserOnline(user: User) {
             <template
               v-for="user in users"
             >
-              <UserCard :user="user" :selected="false" :online="isUserOnline(user)"/>
+              <UserCard @click="toggleUserSelection(user._id)" :user="user" :selected="isUserSelected(user._id)" :online="isUserOnline(user)"/>
             </template>
           </div>
         </template>
