@@ -17,9 +17,9 @@ const usersOnline = ref<User[]>([]);
 
 onMounted(async () => {
   // fetch users
-  console.log(await axios.get('http://localhost:5000/users/all'));
   const apiUsers = await axios.get('http://localhost:5000/users/all')
   users.value = apiUsers.data.users;
+  users.value = users.value.filter(user => user._id !== currentUser?.value?._id);
   const apiUsersOnline = await axios.get('http://localhost:5000/users/online')
   usersOnline.value = apiUsersOnline.data.users;
   // fetch conversations
@@ -27,7 +27,12 @@ onMounted(async () => {
 
 const selectedUsersIds = ref<Array<string>>([])
 
+const headers ={
+  "Authorization" : sessionStorage.getItem('jwt')
+} 
+
 const createConversation = async () => {
+  await axios.post('http://localhost:5000/conversations', { "concernedUsersIds" : selectedUsersIds.value}, {headers : headers});
 }
 
 const toggleUserSelection = (userId: string) => {
@@ -68,7 +73,7 @@ function isUserOnline(user: User) {
             </div>
           </div>
         </div>
-
+        
         <!-- liste de conversations -->
       </div>
       <div class="w-2/3 h-full px-4">
