@@ -7,13 +7,19 @@ import type { User } from '@/models/user';
 import { useUserStore }  from '@/store/userStore';
 import { storeToRefs } from 'pinia';
 import UserCard from '@/components/UserCard.vue';
+import type { Conversation } from '@/models/conversation';
 
 const router = useRouter()
 const userStore = useUserStore();
 const { currentUser }   = storeToRefs(userStore);
 
+const headers = {
+  'Authorization': sessionStorage.getItem('jwt')
+}
+
 const users = ref<User[]>([]);
 const usersOnline = ref<User[]>([]);
+const conversations = ref<Conversation[]>([]);
 
 onMounted(async () => {
   // fetch users
@@ -23,11 +29,23 @@ onMounted(async () => {
   const apiUsersOnline = await axios.get('http://localhost:5000/users/online')
   usersOnline.value = apiUsersOnline.data.users;
   // fetch conversations
+  console.log(await axios.get('http://localhost:5000/conversations', {headers: headers}));
+  const apiConversations = await axios.get('http://localhost:5000/conversations', {headers: headers})
+  conversations.value = apiConversations.data.conversations;
 })
 
 const selectedUsersIds = ref<Array<string>>([])
 
 const createConversation = async () => {
+  await axios.post('http://localhost:5000/conversations', {
+    concernedUsersIds: selectedUsersIds.value
+  }, {headers: headers} )
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
 }
 
 const toggleUserSelection = (userId: string) => {
@@ -68,7 +86,10 @@ function isUserOnline(user: User) {
             </div>
           </div>
         </div>
-
+        <p>hello</p>
+        <li v-for="conversation in conversations">
+          {{ conversation.title }} 
+        </li>
         <!-- liste de conversations -->
       </div>
       <div class="w-2/3 h-full px-4">
