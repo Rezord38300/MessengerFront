@@ -5,12 +5,14 @@ import { twMerge } from 'tailwind-merge'
 import axios from 'axios';
 import type { User } from '@/models/user'; 
 import { useUserStore }  from '@/store/userStore';
+import useSocketStore  from '@/store/socketStore';
 import { storeToRefs } from 'pinia';
 import UserCard from '@/components/UserCard.vue';
 import type { Conversation } from '@/models/conversation';
 
 const router = useRouter()
 const userStore = useUserStore();
+const socketStore = useSocketStore();
 const { currentUser }   = storeToRefs(userStore);
 
 const headers = {
@@ -42,11 +44,35 @@ const createConversation = async () => {
   }, {headers: headers} )
   .then(function (response) {
     console.log(response);
+    socketStore.watchNewConversation((convId, conversation) => {
+      // Mettez en œuvre la logique que vous souhaitez exécuter lorsque vous recevez une nouvelle conversation
+      console.log(`Nouvelle conversation reçue: ${convId}`, conversation);
+      console.log('CONVERSATION CREE');
+      console.log('Voici l ID: ' + convId);
+      // const apiConversations = await axios.get('http://localhost:5000/conversations', {headers: headers})
+      // conversations.value = apiConversations.data.conversations;
+      
+      // Par exemple, mettez à jour l'interface utilisateur avec la nouvelle conversation
+      // updateUIWithNewConversation(conversation);
+      // fetchConversations();
+      router.push('/see/' + convId);
+    });
+    router.push('/see/' + response.data.conversation._id);
+    console.log("nan mais la c'est trop");
   })
   .catch(function (error) {
     console.log(error);
   });
 }
+
+// const fetchConversations = async () => {
+//   try {
+//     const response = await axios.get(`http://localhost:5000/conversations/`, { headers: headers });
+//     conversations.value = response.data.conversations;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
 
 const toggleUserSelection = (userId: string) => {
   const index = selectedUsersIds.value.indexOf(userId);
@@ -86,9 +112,18 @@ function isUserOnline(user: User) {
             </div>
           </div>
         </div>
-        <p>hello</p>
-        <li v-for="conversation in conversations">
-          {{ conversation.title }} 
+        <li v-for="conversation in conversations" style="margin: 8px 0 8px 8px; background-color: rgb(218, 215, 215); border-radius: 8px; list-style-type: none;">
+          <a :href="`see/` + conversation._id"><div style="display: flex; align-items: center;">
+          <img
+              :src="`https://source.unsplash.com/` + currentUser?.profilePicId + `/100x100`"
+              alt="User Image"
+              class="w-12 h-12 rounded-full mr-4"
+            />
+            <div style="width: 85%;">
+              <p>{{ conversation.title }}</p>
+              <p style="text-align: right;">{{ conversation.lastUpdate }}</p>
+            </div>
+          </div></a>
         </li>
         <!-- liste de conversations -->
       </div>
