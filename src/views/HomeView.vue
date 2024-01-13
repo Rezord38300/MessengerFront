@@ -11,6 +11,7 @@ import type { Conversation } from '@/models/conversation';
 
 const router = useRouter()
 const userStore = useUserStore();
+userStore.setCurrentUser(); 
 const { currentUser }   = storeToRefs(userStore);
 
 const headers = {
