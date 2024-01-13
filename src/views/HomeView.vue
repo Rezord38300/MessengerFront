@@ -12,8 +12,9 @@ import type { Conversation } from '@/models/conversation';
 
 const router = useRouter()
 const userStore = useUserStore();
-const socketStore = useSocketStore();
+userStore.setCurrentUser(); 
 const { currentUser }   = storeToRefs(userStore);
+const socketStore = useSocketStore();
 
 const headers = {
   'Authorization': sessionStorage.getItem('jwt')

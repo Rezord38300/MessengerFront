@@ -71,7 +71,9 @@ const submitForm = async () => {
     "password": password.value
   } ).then(function (response) {
     console.log(response.data);
-    userStore.setCurrentUser(response.data.user); 
+    sessionStorage.setItem("username", response.data.user.username)
+    sessionStorage.setItem("ImageId", response.data.user.profilePicId)
+    userStore.setCurrentUser(); 
     socketStore.login(response.data.user);
     sessionStorage.setItem("jwt", response.data.token)
     router.push("/");
