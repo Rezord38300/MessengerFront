@@ -26,6 +26,7 @@ const conversations = ref<Conversation[]>([]);
 const conversation = ref<Conversation>();
 const messageContent = ref<string>();
 const userStore = useUserStore();
+userStore.setCurrentUser(); 
 // userStore.setCurrentUser();
 const { currentUser } = storeToRefs(userStore);
 const testUser = socketStore.getCurrentUser();
@@ -45,29 +46,6 @@ onMounted(async () => {
 
 const submitForm = async () => {
  
-  // axios.post("http://localhost:5000/conversations/"+props.conversationId, {
-  //   "messageContent": messageContent.value
-  // }, {headers: headers} ).then(function (response) {
-  //   console.log(response.data);
-  //   var test = document.getElementById("bla");
-  //   test?.reset();
-  //   // fetchMessages();
-  //   // socketStore.login(userStore.currentUser!);
-    
-  //   console.log("new message")
-  //   // socketStore.watchNewMessage((conversationId: string, message: Message) => {
-  //   //   console.log(`Nouvelle conversation reçue: ${conversationId}`, message);
-  //   //   // fetchMessages();
-  //   //   // const response = await axios.get(`http://localhost:5000/conversations/${props.conversationId}`, { headers: headers });
-  //   //   // conversation.value = response.data;
-  //   //   console.log('hello i am a new message');
-  //   // });
-  // })
-  // .catch(function (error) {
-  //   console.log(error);
-  // });
-
-  
   axios.post("http://localhost:5000/conversations/"+props.conversationId, {
     "messageContent": messageContent.value
   }, {headers: headers} ).then(async function (response) {
@@ -80,7 +58,6 @@ const submitForm = async () => {
   .catch(function (error) {
     console.log(error);
   });
-
 
 }
 
@@ -106,7 +83,7 @@ const currentConversationMessages = computed(() => {
         <div class="bg-white p-4 shadow-md rounded-lg h-[100px]">
           <div class="flex items-center">
             <img
-              :src="`https://source.unsplash.com/` + 'test' + `/100x100`"
+              :src="`https://source.unsplash.com/` + currentUser?.profilePicId + `/100x100`"
               alt="User Image"
               class="w-12 h-12 rounded-full mr-4"
             />
@@ -119,7 +96,7 @@ const currentConversationMessages = computed(() => {
         <li v-for="conversation in conversations" style="margin: 8px 0 8px 8px; background-color: rgb(218, 215, 215); border-radius: 8px; list-style-type: none;">
           <a :href="conversation._id"><div style="display: flex; align-items: center;">
           <img
-              :src="`https://source.unsplash.com/` + 'test' + `/100x100`"
+              :src="`https://source.unsplash.com/` + currentUser?.profilePicId + `/100x100`"
               alt="User Image"
               class="w-12 h-12 rounded-full mr-4"
             />
@@ -134,9 +111,10 @@ const currentConversationMessages = computed(() => {
         <!-- liste de conversations -->
       </div>
       <div class="w-2/3 h-full px-4">
-        <!-- <p>{{conversationId}} </p> -->
-        {{ currentConversationMessages }}
-        <p v-for="message in conversation?.messages">{{ message.content }} </p>
+        <p v-for="message in conversation?.messages">
+          <template v-if=" message.from == currentUser?._id "> {{message.from}} </template>
+          <template v-else> Nul germain </template>
+        </p>
         <form @submit.prevent="submitForm" id="bla">
           <div class="mb-4">
             <label for="message" class="block text-gray-700 font-bold mb-2">Message</label>
