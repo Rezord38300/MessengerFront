@@ -111,9 +111,12 @@ const currentConversationMessages = computed(() => {
         <!-- liste de conversations -->
       </div>
       <div class="w-2/3 h-full px-4">
-        <div v-for="message in conversation?.messages">
-          <p v-if=" currentUser?._id == currentUser?._id " style="text-align: right;"> {{message.from}} </p>
-          <p v-else> {{message.content}} </p>
+        <div v-for="message in conversation?.messages" style="margin-top: 16px;">
+          <div style="display: flex;">
+            <p v-if=" message.from == currentUser?._id " style="background-color: aqua; padding: 8px; margin-left: auto; text-align: right;"> {{message.content}} </p>
+            <p v-else style="background-color: lightgrey; padding: 8px;"> {{message.content}} </p>
+          </div>
+          
         </div>
         <form @submit.prevent="submitForm" id="bla">
           <div class="mb-4">
