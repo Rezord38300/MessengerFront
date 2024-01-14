@@ -125,7 +125,7 @@ function isUserOnline(user: User) {
             />
             <div style="width: 85%;">
               <p>{{ conversation.title }}</p>
-              <p v-if="conversation.messages[conversation.messages.length - 1]" style="font-style: italic;">{{ conversation.messages[conversation.messages.length - 1].content }} </p>
+              <p v-if="conversation.messages[conversation.messages.length - 1]" style="font-style: italic;">{{ conversation.messages[conversation.messages.length - 1].content }}</p>
               <p v-else style="font-style: italic;">Démarer la conversation</p>
               <p style="text-align: right;">{{ conversation.lastUpdate }}</p>
             </div>
