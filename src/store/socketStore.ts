@@ -135,6 +135,14 @@ const useSocketStore = defineStore('socketStore', () => {
     })
   }
 
+  function getCurrentUser(): User | null {
+    return state.currentUser;
+  }
+
+  function setCurrentUser(user: User): void {
+    state.currentUser = user;
+  }
+
   return {
     login,
     watchNewUser,
@@ -145,6 +153,8 @@ const useSocketStore = defineStore('socketStore', () => {
     watchConversationDeleted,
     watchConversationSeen,
     watchNewConversation,
+    getCurrentUser,
+    setCurrentUser
   }
 })
 

@@ -15,6 +15,9 @@ const userStore = useUserStore();
 userStore.setCurrentUser(); 
 const { currentUser }   = storeToRefs(userStore);
 const socketStore = useSocketStore();
+// socketStore.setCurrentUser(currentUser.value!);
+console.log("----------" + socketStore.getCurrentUser()?._id);
+socketStore.setCurrentUser(socketStore.getCurrentUser()!);
 
 const headers = {
   'Authorization': sessionStorage.getItem('jwt')

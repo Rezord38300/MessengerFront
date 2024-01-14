@@ -5,6 +5,8 @@ import { onMounted, ref, type FormHTMLAttributes, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import useSocketStore  from '@/store/socketStore';
 import type { Message } from '@/models/message';
+import { useUserStore }  from '@/store/userStore';
+import { storeToRefs } from 'pinia';
 
 const route = useRoute();
 // const conversationId = computed<string>(() => {
@@ -23,31 +25,62 @@ const headers = {
 const conversations = ref<Conversation[]>([]);
 const conversation = ref<Conversation>();
 const messageContent = ref<string>();
+const userStore = useUserStore();
+// userStore.setCurrentUser();
+const { currentUser } = storeToRefs(userStore);
+const testUser = socketStore.getCurrentUser();
+
+console.log("----------" + socketStore.getCurrentUser()?._id);
+console.log("----------" + userStore.currentUser);
 
 onMounted(async () => {
   console.log(await axios.get('http://localhost:5000/conversations', {headers: headers}));
   const apiConversations = await axios.get('http://localhost:5000/conversations', {headers: headers})
   conversations.value = apiConversations.data.conversations;
   conversation.value = conversations.value.find(conversation => conversation._id == props.conversationId);
+  socketStore.login(testUser!);
+  console.log(testUser);
+  socketStore.watchNewMessage((conversationId: string, message: Message) => {console.log("hello")});
 })
 
 const submitForm = async () => {
  
+  // axios.post("http://localhost:5000/conversations/"+props.conversationId, {
+  //   "messageContent": messageContent.value
+  // }, {headers: headers} ).then(function (response) {
+  //   console.log(response.data);
+  //   var test = document.getElementById("bla");
+  //   test?.reset();
+  //   // fetchMessages();
+  //   // socketStore.login(userStore.currentUser!);
+    
+  //   console.log("new message")
+  //   // socketStore.watchNewMessage((conversationId: string, message: Message) => {
+  //   //   console.log(`Nouvelle conversation reçue: ${conversationId}`, message);
+  //   //   // fetchMessages();
+  //   //   // const response = await axios.get(`http://localhost:5000/conversations/${props.conversationId}`, { headers: headers });
+  //   //   // conversation.value = response.data;
+  //   //   console.log('hello i am a new message');
+  //   // });
+  // })
+  // .catch(function (error) {
+  //   console.log(error);
+  // });
+
+  
   axios.post("http://localhost:5000/conversations/"+props.conversationId, {
     "messageContent": messageContent.value
-  }, {headers: headers} ).then(function (response) {
+  }, {headers: headers} ).then(async function (response) {
     console.log(response.data);
     var test = document.getElementById("bla");
     test?.reset();
-    // fetchMessages();
-    socketStore.watchNewMessage((conversationId: string, message: Message) => {
-      fetchMessages();
-      console.log('hello i am a new message');
-    });
+    await fetchMessages();
+    console.log("new message");
   })
   .catch(function (error) {
     console.log(error);
   });
+
 
 }
 
@@ -78,7 +111,7 @@ const currentConversationMessages = computed(() => {
               class="w-12 h-12 rounded-full mr-4"
             />
             <div>
-              <h2 class="text-2xl font-bold">'test</h2>
+              <h2 class="text-2xl font-bold">{{ currentUser?.username }}</h2>
               <span class="text-green-500">Online</span>
             </div>
           </div>

@@ -19,6 +19,7 @@ export const useUserStore = defineStore('userStore', () => {
       };
       newUser.username = sessionStorage.getItem("username") as string
       newUser.profilePicId = sessionStorage.getItem("ImageId") as string
+      newUser._id = sessionStorage.getItem("UserId") as string
       console.log("user storage : " + newUser.username)
       if (newUser.username != null){
         currentUser.value = newUser;

@@ -73,8 +73,10 @@ const submitForm = async () => {
     console.log(response.data);
     sessionStorage.setItem("username", response.data.user.username)
     sessionStorage.setItem("ImageId", response.data.user.profilePicId)
+    sessionStorage.setItem("UserId", response.data.user.userId)
     userStore.setCurrentUser(); 
     socketStore.login(response.data.user);
+    userStore.currentUser = response.data.user;
     sessionStorage.setItem("jwt", response.data.token)
     router.push("/");
   })

@@ -21,7 +21,8 @@ const router = createRouter({
       path: '/see/:conversationId',
       name: 'seeConversation',
       component: ConversationView,
-      props: true
+      props: true,
+      meta: { requiresAuth: true }
     }
   ]
 })
